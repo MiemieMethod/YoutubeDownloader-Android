@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="YoutubeDownloader.Views.Dialogs.AuthSetupPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:converters="clr-namespace:YoutubeDownloader.Converters"
+    xmlns:dialogs="clr-namespace:YoutubeDownloader.ViewModels.Dialogs"
+    xmlns:framework="clr-namespace:YoutubeDownloader.Framework"
+    x:DataType="dialogs:AuthSetupViewModel">
+    <Grid RowDefinitions="Auto,*">
+        <!--  Title bar  -->
+        <Grid
+            Grid.Row="0"
+            ColumnDefinitions="Auto,*"
+            ColumnSpacing="8"
+            Style="{StaticResource DialogTitleBar}">
+            <Button
+                Grid.Column="0"
+                Command="{Binding CloseCommand}"
+                SemanticProperties.Description="{Binding LocalizationManager.CloseButton}"
+                Style="{StaticResource HeaderIconButton}"
+                Text="{x:Static framework:MaterialIcons.Close}" />
+            <Label
+                Grid.Column="1"
+                Style="{StaticResource DialogTitleLabel}"
+                Text="{Binding LocalizationManager.AuthenticationTitle}" />
+        </Grid>
+
+        <!--  Authenticated  -->
+        <VerticalStackLayout
+            Grid.Row="1"
+            Padding="24"
+            IsVisible="{Binding IsAuthenticated}"
+            Spacing="16"
+            VerticalOptions="Center">
+            <Label
+                FontFamily="{x:Static framework:MaterialIcons.FontFamily}"
+                FontSize="96"
+                HorizontalOptions="Center"
+                Text="{x:Static framework:MaterialIcons.AccountCheck}"
+                TextColor="{StaticResource AccentColor}" />
+            <Label HorizontalTextAlignment="Center" Text="{Binding LocalizationManager.AuthenticatedText}" />
+            <Button
+                Clicked="LogOutButton_OnClicked"
+                HorizontalOptions="Center"
+                Text="{Binding LocalizationManager.LogOutButton}"
+                TextColor="{StaticResource AccentColor}" />
+        </VerticalStackLayout>
+
+        <!--  Not authenticated  -->
+        <Grid
+            Grid.Row="1"
+            IsVisible="{Binding IsAuthenticated, Converter={x:Static converters:BoolInverseConverter.Instance}}">
+            <WebView x:Name="LoginWebView" Navigated="LoginWebView_OnNavigated" />
+            <Label
+                x:Name="LoadingLabel"
+                Padding="32"
+                HorizontalTextAlignment="Center"
+                Style="{StaticResource SecondaryLabel}"
+                Text="{Binding LocalizationManager.AuthenticationPlaceholderText}"
+                VerticalOptions="Center" />
+        </Grid>
+    </Grid>
+</ContentPage>

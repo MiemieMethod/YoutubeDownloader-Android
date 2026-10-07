@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="YoutubeDownloader.Views.Dialogs.SettingsPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:converters="clr-namespace:YoutubeDownloader.Converters"
+    xmlns:dialogs="clr-namespace:YoutubeDownloader.ViewModels.Dialogs"
+    xmlns:framework="clr-namespace:YoutubeDownloader.Framework"
+    x:DataType="dialogs:SettingsViewModel">
+    <ContentPage.Resources>
+        <Style x:Key="SettingRow" TargetType="Grid">
+            <Setter Property="Padding" Value="0,10" />
+            <Setter Property="ColumnSpacing" Value="12" />
+        </Style>
+    </ContentPage.Resources>
+
+    <Grid RowDefinitions="Auto,*,Auto">
+        <!--  Title bar  -->
+        <Grid
+            Grid.Row="0"
+            ColumnDefinitions="Auto,*"
+            ColumnSpacing="8"
+            Style="{StaticResource DialogTitleBar}">
+            <Button
+                Grid.Column="0"
+                Command="{Binding CloseCommand}"
+                SemanticProperties.Description="{Binding LocalizationManager.CloseButton}"
+                Style="{StaticResource HeaderIconButton}"
+                Text="{x:Static framework:MaterialIcons.Close}" />
+            <Label
+                Grid.Column="1"
+                Style="{StaticResource DialogTitleLabel}"
+                Text="{Binding LocalizationManager.SettingsTitle}" />
+        </Grid>
+
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="16,8">
+                <!--  Theme  -->
+                <Grid ColumnDefinitions="*,Auto" Style="{StaticResource SettingRow}">
+                    <VerticalStackLayout Grid.Column="0" VerticalOptions="Center">
+                        <Label Text="{Binding LocalizationManager.ThemeLabel}" />
+                        <Label Style="{StaticResource SecondaryLabel}" Text="{Binding LocalizationManager.ThemeTooltip}" />
+                    </VerticalStackLayout>
+                    <Picker
+                        Grid.Column="1"
+                        ItemsSource="{Binding AvailableThemeNames}"
+                        MinimumWidthRequest="120"
+                        SelectedIndex="{Binding ThemeIndex}"
+                        Title="{Binding LocalizationManager.ThemeLabel}"
+                        VerticalOptions="Center" />
+                </Grid>
+
+                <!--  Language  -->
+                <Grid ColumnDefinitions="*,Auto" Style="{StaticResource SettingRow}">
+                    <VerticalStackLayout Grid.Column="0" VerticalOptions="Center">
+                        <Label Text="{Binding LocalizationManager.LanguageLabel}" />
+                        <Label Style="{StaticResource SecondaryLabel}" Text="{Binding LocalizationManager.LanguageTooltip}" />
+                    </VerticalStackLayout>
+                    <Picker
+                        Grid.Column="1"
+                        ItemsSource="{Binding AvailableLanguageNames}"
+                        MinimumWidthRequest="120"
+                        SelectedIndex="{Binding LanguageIndex}"
+                        Title="{Binding LocalizationManager.LanguageLabel}"
+                        VerticalOptions="Center" />
+                </Grid>
+
+                <!--  Auto-update  -->
+                <Grid ColumnDefinitions="*,Auto" Style="{StaticResource SettingRow}">
+                    <VerticalStackLayout Grid.Column="0" VerticalOptions="Center">
+                        <Label Text="{Binding LocalizationManager.AutoUpdateLabel}" />
+                        <Label Style="{StaticResource SecondaryLabel}" Text="{Binding LocalizationManager.AutoUpdateTooltip}" />
+                    </VerticalStackLayout>
+                    <Switch Grid.Column="1" IsToggled="{Binding IsAutoUpdateEnabled}" />
+                </Grid>
+
+                <!--  Persist authentication  -->
+                <Grid ColumnDefinitions="*,Auto" Style="{StaticResource SettingRow}">
+                    <VerticalStackLayout Grid.Column="0" VerticalOptions="Center">
+                        <Label Text="{Binding LocalizationManager.PersistAuthLabel}" />
+                        <Label Style="{StaticResource SecondaryLabel}" Text="{Binding LocalizationManager.PersistAuthTooltip}" />
+                    </VerticalStackLayout>
+                    <Switch Grid.Column="1" IsToggled="{Binding IsAuthPersisted}" />
+                </Grid>
+
+                <!--  Inject language-specific audio streams  -->
+                <Grid ColumnDefinitions="*,Auto" Style="{StaticResource SettingRow}">
+                    <VerticalStackLayout Grid.Column="0" VerticalOptions="Center">
+                        <Label Text="{Binding LocalizationManager.InjectAltLanguagesLabel}" />
+                        <Label Style="{StaticResource SecondaryLabel}" Text="{Binding LocalizationManager.InjectAltLanguagesTooltip}" />
+                    </VerticalStackLayout>
+                    <Switch Grid.Column="1" IsToggled="{Binding ShouldInjectLanguageSpecificAudioStreams}" />
+                </Grid>
+
+                <!--  Inject subtitles  -->
+                <Grid ColumnDefinitions="*,Auto" Style="{StaticResource SettingRow}">
+                    <VerticalStackLayout Grid.Column="0" VerticalOptions="Center">
+                        <Label Text="{Binding LocalizationManager.InjectSubtitlesLabel}" />
+                        <Label Style="{StaticResource SecondaryLabel}" Text="{Binding LocalizationManager.InjectSubtitlesTooltip}" />
+                    </VerticalStackLayout>
+                    <Switch Grid.Column="1" IsToggled="{Binding ShouldInjectSubtitles}" />
+                </Grid>
+
+                <!--  Inject tags  -->
+                <Grid ColumnDefinitions="*,Auto" Style="{StaticResource SettingRow}">
+                    <VerticalStackLayout Grid.Column="0" VerticalOptions="Center">
+                        <Label Text="{Binding LocalizationManager.InjectTagsLabel}" />
+                        <Label Style="{StaticResource SecondaryLabel}" Text="{Binding LocalizationManager.InjectTagsTooltip}" />
+                    </VerticalStackLayout>
+                    <Switch Grid.Column="1" IsToggled="{Binding ShouldInjectTags}" />
+                </Grid>
+
+                <!--  Skip existing files  -->
+                <Grid ColumnDefinitions="*,Auto" Style="{StaticResource SettingRow}">
+                    <VerticalStackLayout Grid.Column="0" VerticalOptions="Center">
+                        <Label Text="{Binding LocalizationManager.SkipExistingFilesLabel}" />
+                        <Label Style="{StaticResource SecondaryLabel}" Text="{Binding LocalizationManager.SkipExistingFilesTooltip}" />
+                    </VerticalStackLayout>
+                    <Switch Grid.Column="1" IsToggled="{Binding ShouldSkipExistingFiles}" />
+                </Grid>
+
+                <!--  Download directory  -->
+                <Grid ColumnDefinitions="*,Auto,Auto" Style="{StaticResource SettingRow}">
+                    <VerticalStackLayout Grid.Column="0" VerticalOptions="Center">
+                        <Label Text="{Binding LocalizationManager.DownloadDirectoryLabel}" />
+                        <Label Style="{StaticResource SecondaryLabel}" Text="{Binding LocalizationManager.DownloadDirectoryTooltip}" />
+                        <Label
+                            FontAttributes="Bold"
+                            LineBreakMode="MiddleTruncation"
+                            Style="{StaticResource SecondaryLabel}"
+                            Text="{Binding DownloadDirectoryName}" />
+                    </VerticalStackLayout>
+                    <Button
+                        Grid.Column="1"
+                        Command="{Binding BrowseDownloadDirectoryCommand}"
+                        SemanticProperties.Description="{Binding LocalizationManager.DownloadDirectoryBrowseTooltip}"
+                        Style="{StaticResource IconButton}"
+                        Text="{x:Static framework:MaterialIcons.FolderOpen}" />
+                    <Button
+                        Grid.Column="2"
+                        Command="{Binding ResetDownloadDirectoryCommand}"
+                        IsVisible="{Binding IsDownloadDirectoryCustom}"
+                        SemanticProperties.Description="{Binding LocalizationManager.DownloadDirectoryResetTooltip}"
+                        Style="{StaticResource IconButton}"
+                        Text="{x:Static framework:MaterialIcons.BackupRestore}" />
+                </Grid>
+
+                <!--  File name template  -->
+                <VerticalStackLayout Padding="0,10" Spacing="2">
+                    <Label Text="{Binding LocalizationManager.FileNameTemplateLabel}" />
+                    <Label FormattedText="{Binding LocalizationManager.FileNameTemplateTooltip, Converter={x:Static converters:MarkdownToFormattedStringConverter.Instance}}" Style="{StaticResource SecondaryLabel}" />
+                    <Entry
+                        IsSpellCheckEnabled="False"
+                        IsTextPredictionEnabled="False"
+                        Text="{Binding FileNameTemplate}" />
+                </VerticalStackLayout>
+
+                <!--  Parallel limit  -->
+                <Grid ColumnDefinitions="*,Auto,Auto" Style="{StaticResource SettingRow}">
+                    <VerticalStackLayout Grid.Column="0" VerticalOptions="Center">
+                        <Label Text="{Binding LocalizationManager.ParallelLimitLabel}" />
+                        <Label Style="{StaticResource SecondaryLabel}" Text="{Binding LocalizationManager.ParallelLimitTooltip}" />
+                    </VerticalStackLayout>
+                    <Label
+                        Grid.Column="1"
+                        FontAttributes="Bold"
+                        MinimumWidthRequest="24"
+                        HorizontalTextAlignment="Center"
+                        Text="{Binding ParallelLimit}"
+                        VerticalOptions="Center" />
+                    <Stepper
+                        Grid.Column="2"
+                        Increment="1"
+                        Maximum="10"
+                        Minimum="1"
+                        Value="{Binding ParallelLimitValue}" />
+                </Grid>
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <!--  Buttons  -->
+        <HorizontalStackLayout
+            Grid.Row="2"
+            Padding="8"
+            HorizontalOptions="End">
+            <Button
+                Command="{Binding CloseCommand}"
+                Text="{Binding LocalizationManager.CloseButton}"
+                TextColor="{StaticResource AccentColor}" />
+        </HorizontalStackLayout>
+    </Grid>
+</ContentPage>

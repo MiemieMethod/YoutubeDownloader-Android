@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="YoutubeDownloader.Views.MainPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:components="clr-namespace:YoutubeDownloader.ViewModels.Components"
+    xmlns:converters="clr-namespace:YoutubeDownloader.Converters"
+    xmlns:framework="clr-namespace:YoutubeDownloader.Framework"
+    xmlns:viewModels="clr-namespace:YoutubeDownloader.ViewModels"
+    x:DataType="viewModels:MainViewModel"
+    NavigationPage.HasNavigationBar="False">
+    <Grid RowDefinitions="Auto,Auto,*">
+        <!--  Header  -->
+        <VerticalStackLayout
+            Grid.Row="0"
+            Padding="16,8,4,12"
+            BackgroundColor="{AppThemeBinding Light={StaticResource HeaderColorLight},
+                                              Dark={StaticResource HeaderColorDark}}"
+            Spacing="8">
+            <Grid ColumnDefinitions="*,Auto,Auto,Auto">
+                <Label
+                    Grid.Column="0"
+                    FontAttributes="Bold"
+                    FontSize="18"
+                    LineBreakMode="TailTruncation"
+                    Text="{Binding Title}"
+                    TextColor="White"
+                    VerticalOptions="Center" />
+                <Button
+                    Grid.Column="1"
+                    Command="{Binding Dashboard.ShowAuthSetupCommand}"
+                    SemanticProperties.Description="{Binding Dashboard.LocalizationManager.AuthTooltip}"
+                    Style="{StaticResource HeaderIconButton}"
+                    Text="{x:Static framework:MaterialIcons.AccountKey}" />
+                <Button
+                    Grid.Column="2"
+                    Command="{Binding Dashboard.ShowSettingsCommand}"
+                    SemanticProperties.Description="{Binding Dashboard.LocalizationManager.SettingsTooltip}"
+                    Style="{StaticResource HeaderIconButton}"
+                    Text="{x:Static framework:MaterialIcons.Cog}" />
+                <Button
+                    Grid.Column="3"
+                    Clicked="MoreOptionsButton_OnClicked"
+                    SemanticProperties.Description="{Binding Dashboard.LocalizationManager.MoreOptionsTooltip}"
+                    Style="{StaticResource HeaderIconButton}"
+                    Text="{x:Static framework:MaterialIcons.DotsVertical}" />
+            </Grid>
+
+            <!--  Query  -->
+            <Border
+                Margin="0,0,12,0"
+                Padding="12,0,0,0"
+                BackgroundColor="{AppThemeBinding Light={StaticResource CardColorLight},
+                                                  Dark={StaticResource CardColorDark}}"
+                StrokeShape="RoundRectangle 6"
+                StrokeThickness="0">
+                <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8">
+                    <Label
+                        Grid.Column="0"
+                        Style="{StaticResource IconLabel}"
+                        Text="{x:Static framework:MaterialIcons.Magnify}" />
+                    <Editor
+                        x:Name="QueryEditor"
+                        Grid.Column="1"
+                        AutoSize="TextChanges"
+                        BackgroundColor="Transparent"
+                        FontSize="15"
+                        IsSpellCheckEnabled="False"
+                        IsTextPredictionEnabled="False"
+                        MaximumHeightRequest="160"
+                        Placeholder="{Binding Dashboard.LocalizationManager.QueryPlaceholderText}"
+                        SemanticProperties.Hint="{Binding Dashboard.LocalizationManager.QueryTooltip}"
+                        Text="{Binding Dashboard.Query}"
+                        VerticalOptions="Center" />
+                    <Button
+                        Grid.Column="2"
+                        Command="{Binding Dashboard.ProcessQueryCommand}"
+                        SemanticProperties.Description="{Binding Dashboard.LocalizationManager.ProcessQueryTooltip}"
+                        Style="{StaticResource IconButton}"
+                        Text="{x:Static framework:MaterialIcons.ArrowRight}"
+                        TextColor="{StaticResource AccentColor}" />
+                </Grid>
+            </Border>
+        </VerticalStackLayout>
+
+        <!--  Progress  -->
+        <ProgressBar
+            Grid.Row="1"
+            framework:ProgressBarAssist.IsIndeterminate="{Binding Dashboard.IsProgressIndeterminate}"
+            HeightRequest="4"
+            IsVisible="{Binding Dashboard.IsBusy}"
+            Progress="{Binding Dashboard.Progress.Current.Fraction}" />
+
+        <!--  Placeholder  -->
+        <VerticalStackLayout
+            Grid.Row="2"
+            Padding="32"
+            IsVisible="{Binding Dashboard.Downloads.Count, Converter={x:Static converters:IsZeroConverter.IsZero}}"
+            Spacing="16"
+            VerticalOptions="Center">
+            <Label
+                FontFamily="{x:Static framework:MaterialIcons.FontFamily}"
+                FontSize="96"
+                HorizontalOptions="Center"
+                Opacity="0.4"
+                Text="{x:Static framework:MaterialIcons.Youtube}"
+                TextColor="{AppThemeBinding Light={StaticResource SecondaryTextColorLight},
+                                            Dark={StaticResource SecondaryTextColorDark}}" />
+            <Label
+                FormattedText="{Binding Dashboard.LocalizationManager.DashboardPlaceholder, Converter={x:Static converters:MarkdownToFormattedStringConverter.Instance}}"
+                HorizontalTextAlignment="Center"
+                LineHeight="1.2"
+                Style="{StaticResource SecondaryLabel}" />
+        </VerticalStackLayout>
+
+        <!--  Downloads  -->
+        <CollectionView
+            Grid.Row="2"
+            IsVisible="{Binding Dashboard.Downloads.Count, Converter={x:Static converters:IsZeroConverter.IsNotZero}}"
+            ItemsSource="{Binding Dashboard.Downloads}"
+            SelectionMode="None">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="components:DownloadViewModel">
+                    <Grid
+                        Padding="12,8,4,8"
+                        ColumnDefinitions="Auto,*,Auto"
+                        ColumnSpacing="12">
+                        <Border
+                            Grid.Column="0"
+                            HeightRequest="54"
+                            StrokeShape="RoundRectangle 4"
+                            StrokeThickness="0"
+                            VerticalOptions="Center"
+                            WidthRequest="96">
+                            <Image Aspect="AspectFill" Source="{Binding Video, Converter={x:Static converters:VideoToThumbnailConverter.Lowest}}" />
+                        </Border>
+
+                        <VerticalStackLayout
+                            Grid.Column="1"
+                            Spacing="4"
+                            VerticalOptions="Center">
+                            <Label
+                                FontSize="14"
+                                LineBreakMode="TailTruncation"
+                                MaxLines="2"
+                                Text="{Binding FileName}" />
+                            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8">
+                                <Label
+                                    Grid.Column="0"
+                                    FontSize="13"
+                                    Text="{Binding StatusText}"
+                                    TextColor="{Binding Status, Converter={x:Static converters:DownloadStatusToColorConverter.Instance}}"
+                                    VerticalOptions="Center">
+                                    <Label.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding ShowErrorMessageCommand}" />
+                                    </Label.GestureRecognizers>
+                                </Label>
+                                <ProgressBar
+                                    Grid.Column="1"
+                                    framework:ProgressBarAssist.IsIndeterminate="{Binding IsProgressIndeterminate}"
+                                    IsVisible="{Binding IsStarted}"
+                                    Progress="{Binding Progress.Current.Fraction}"
+                                    VerticalOptions="Center" />
+                            </Grid>
+                        </VerticalStackLayout>
+
+                        <HorizontalStackLayout Grid.Column="2" VerticalOptions="Center">
+                            <!--  Cancel  -->
+                            <Button
+                                Command="{Binding CancelCommand}"
+                                IsVisible="{Binding IsCancelable}"
+                                SemanticProperties.Description="{Binding LocalizationManager.CancelDownloadTooltip}"
+                                Style="{StaticResource IconButton}"
+                                Text="{x:Static framework:MaterialIcons.Close}" />
+                            <!--  Open  -->
+                            <Button
+                                Command="{Binding OpenFileCommand}"
+                                IsVisible="{Binding IsCompleted}"
+                                SemanticProperties.Description="{Binding LocalizationManager.PlayTooltip}"
+                                Style="{StaticResource IconButton}"
+                                Text="{x:Static framework:MaterialIcons.PlayCircleOutline}"
+                                TextColor="{StaticResource AccentColor}" />
+                            <!--  Share  -->
+                            <Button
+                                Command="{Binding ShareFileCommand}"
+                                IsVisible="{Binding IsCompleted}"
+                                SemanticProperties.Description="{Binding LocalizationManager.ShareTooltip}"
+                                Style="{StaticResource IconButton}"
+                                Text="{x:Static framework:MaterialIcons.ShareVariant}" />
+                            <!--  Error details  -->
+                            <Button
+                                Command="{Binding ShowErrorMessageCommand}"
+                                IsVisible="{Binding IsCanceledOrFailed}"
+                                SemanticProperties.Description="{Binding LocalizationManager.ErrorTitle}"
+                                Style="{StaticResource IconButton}"
+                                Text="{x:Static framework:MaterialIcons.InformationOutline}" />
+                            <!--  Restart  -->
+                            <Button
+                                Clicked="RestartButton_OnClicked"
+                                IsVisible="{Binding IsCanceledOrFailed}"
+                                SemanticProperties.Description="{Binding LocalizationManager.RestartDownloadTooltip}"
+                                Style="{StaticResource IconButton}"
+                                Text="{x:Static framework:MaterialIcons.Restart}" />
+                        </HorizontalStackLayout>
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </Grid>
+</ContentPage>

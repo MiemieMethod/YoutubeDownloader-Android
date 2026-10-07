@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="YoutubeDownloader.Views.Dialogs.DownloadSingleSetupPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:converters="clr-namespace:YoutubeDownloader.Converters"
+    xmlns:dialogs="clr-namespace:YoutubeDownloader.ViewModels.Dialogs"
+    xmlns:framework="clr-namespace:YoutubeDownloader.Framework"
+    x:DataType="dialogs:DownloadSingleSetupViewModel">
+    <Grid RowDefinitions="Auto,*,Auto">
+        <!--  Title bar  -->
+        <Grid
+            Grid.Row="0"
+            ColumnDefinitions="Auto,*"
+            ColumnSpacing="8"
+            Style="{StaticResource DialogTitleBar}">
+            <Button
+                Grid.Column="0"
+                Command="{Binding CloseCommand}"
+                SemanticProperties.Description="{Binding LocalizationManager.CancelButton}"
+                Style="{StaticResource HeaderIconButton}"
+                Text="{x:Static framework:MaterialIcons.Close}" />
+            <Label
+                Grid.Column="1"
+                Style="{StaticResource DialogTitleLabel}"
+                Text="{Binding LocalizationManager.DownloadButton}" />
+        </Grid>
+
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="16" Spacing="12">
+                <!--  Thumbnail  -->
+                <Border StrokeShape="RoundRectangle 6" StrokeThickness="0">
+                    <Image
+                        Aspect="AspectFill"
+                        HeightRequest="200"
+                        Source="{Binding Video, Converter={x:Static converters:VideoToThumbnailConverter.Highest}}" />
+                </Border>
+
+                <!--  Title  -->
+                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="4">
+                    <Label
+                        Grid.Column="0"
+                        FontAttributes="Bold"
+                        FontSize="18"
+                        Text="{Binding Video.Title}"
+                        VerticalOptions="Center" />
+                    <Button
+                        Grid.Column="1"
+                        Command="{Binding CopyTitleCommand}"
+                        SemanticProperties.Description="{Binding LocalizationManager.CopyMenuItem}"
+                        Style="{StaticResource IconButton}"
+                        Text="{x:Static framework:MaterialIcons.ContentCopy}"
+                        VerticalOptions="Start" />
+                </Grid>
+
+                <!--  Author and duration  -->
+                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                    <Label
+                        Grid.Column="0"
+                        LineBreakMode="TailTruncation"
+                        Style="{StaticResource SecondaryLabel}"
+                        Text="{Binding Video.Author.ChannelTitle}" />
+                    <Label
+                        Grid.Column="1"
+                        Style="{StaticResource SecondaryLabel}"
+                        Text="{Binding DurationText}" />
+                </Grid>
+
+                <BoxView Style="{StaticResource Divider}" />
+
+                <!--  Format  -->
+                <Label Style="{StaticResource SecondaryLabel}" Text="{Binding LocalizationManager.FormatLabel}" />
+                <Picker
+                    ItemsSource="{Binding AvailableDownloadOptionNames}"
+                    SelectedIndex="{Binding SelectedDownloadOptionIndex}"
+                    Title="{Binding LocalizationManager.FormatLabel}" />
+
+                <!--  File name  -->
+                <Label Style="{StaticResource SecondaryLabel}" Text="{Binding LocalizationManager.FileNameLabel}" />
+                <Entry ClearButtonVisibility="WhileEditing" Text="{Binding FileName}" />
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <!--  Buttons  -->
+        <HorizontalStackLayout
+            Grid.Row="2"
+            Padding="8"
+            HorizontalOptions="End"
+            Spacing="8">
+            <Button Command="{Binding CloseCommand}" Text="{Binding LocalizationManager.CancelButton}" />
+            <Button
+                Command="{Binding ConfirmCommand}"
+                Text="{Binding LocalizationManager.DownloadButton}"
+                TextColor="{StaticResource AccentColor}" />
+        </HorizontalStackLayout>
+    </Grid>
+</ContentPage>
