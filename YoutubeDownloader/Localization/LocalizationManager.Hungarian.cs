@@ -90,13 +90,15 @@ public partial class LocalizationManager
             [nameof(DownloadButton)] = "LETÖLTÉS",
             [nameof(CancelButton)] = "MÉGSE",
             // Dialog messages
-            [nameof(UkraineSupportTitle)] = "Köszönet Ukrajna támogatásáért!",
-            [nameof(UkraineSupportMessage)] = """
-                Mialatt Oroszország népirtó háborút vív hazám ellen, hálás vagyok mindenkinek, aki továbbra is Ukrajna mellett áll a szabadságért folytatott harcunkban.
+            [nameof(WelcomeTitle)] = "Üdvözlünk a(z) {0} alkalmazásban!",
+            [nameof(WelcomeMessage)] = """
+                Ez az alkalmazás ingyenes és nyílt forráskódú. Ha hasznosnak találod, támogasd egy csillaggal a GitHub-tárolóján, és ajánld másoknak is.
 
-                A TUDJ MEG TÖBBET gombra kattintva megtudhatod, hogyan segíthetsz.
+                A hibajelentéseket, javaslatokat és kódhozzájárulásokat is szívesen fogadjuk. Tegyük együtt jobbá ezt az alkalmazást!
+
+                {0}
                 """,
-            [nameof(LearnMoreButton)] = "Tudj meg többet",
+            [nameof(OpenProjectButton)] = "GITHUB MEGNYITÁSA",
             [nameof(FFmpegMissingTitle)] = "Az FFmpeg hiányzik",
             [nameof(FFmpegMissingMessage)] = """
                 A(z) {0} alkalmazással együtt szállított FFmpeg nem található vagy nem indítható el. Szükség van rá a videók letöltéséhez.

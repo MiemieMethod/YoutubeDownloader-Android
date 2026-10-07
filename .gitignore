@@ -429,3 +429,8 @@ FodyWeavers.xsd
 
 # FFmpeg Android build work directory (sources and intermediate files)
 ffmpeg/.build/
+
+# APK signing keys and generated signing secrets
+*.keystore
+*.jks
+signing-secrets/

@@ -20,24 +20,24 @@ public partial class MainViewModel(
 
     public DashboardViewModel Dashboard { get; } = viewModelManager.GetDashboardViewModel();
 
-    private async Task ShowUkraineSupportMessageAsync()
+    private async Task ShowWelcomeMessageAsync()
     {
-        if (!settingsService.IsUkraineSupportMessageEnabled)
+        if (!settingsService.IsWelcomeMessageEnabled)
             return;
 
         var dialog = viewModelManager.GetMessageBoxViewModel(
-            localizationManager.UkraineSupportTitle,
-            localizationManager.UkraineSupportMessage,
-            localizationManager.LearnMoreButton,
+            string.Format(localizationManager.WelcomeTitle, Program.Name),
+            string.Format(localizationManager.WelcomeMessage, Program.ProjectUrl),
+            localizationManager.OpenProjectButton,
             localizationManager.CloseButton
         );
 
         // Disable this message in the future
-        settingsService.IsUkraineSupportMessageEnabled = false;
+        settingsService.IsWelcomeMessageEnabled = false;
         settingsService.Save();
 
         if (await dialogManager.ShowDialogAsync(dialog) == true)
-            await Launcher.Default.OpenAsync("https://tyrrrz.me/ukraine?source=youtubedownloader");
+            await Launcher.Default.OpenAsync(Program.ProjectUrl);
     }
 
     // Notifications are used to display the progress of active downloads
@@ -77,14 +77,14 @@ public partial class MainViewModel(
                     updateVersion.ToString(3)
                 ),
                 localizationManager.DownloadButton,
-                () => _ = Launcher.Default.OpenAsync(Program.ProjectReleasesUrl),
+                () => _ = Launcher.Default.OpenAsync(Program.ProjectLatestReleaseUrl),
                 TimeSpan.FromSeconds(15)
             );
         }
-        catch
+        catch (Exception ex)
         {
             // Failure to check for updates shouldn't crash the application
-            snackbarManager.Notify(localizationManager.UpdateCheckFailedMessage);
+            snackbarManager.Notify($"{localizationManager.UpdateCheckFailedMessage}: {ex.Message}");
         }
     }
 
@@ -97,7 +97,7 @@ public partial class MainViewModel(
 
         _isInitialized = true;
 
-        await ShowUkraineSupportMessageAsync();
+        await ShowWelcomeMessageAsync();
         await Dashboard.InitializeAsync();
         await RequestNotificationPermissionAsync();
         await CheckForUpdatesAsync();

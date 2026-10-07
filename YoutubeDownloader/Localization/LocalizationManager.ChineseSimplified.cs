@@ -90,13 +90,15 @@ public partial class LocalizationManager
             [nameof(DownloadButton)] = "下载",
             [nameof(CancelButton)] = "取消",
             // Dialog messages
-            [nameof(UkraineSupportTitle)] = "感谢你支持乌克兰！",
-            [nameof(UkraineSupportMessage)] = """
-                由于俄罗斯正对我的国家发动一场种族灭绝战争，我向所有在我们的自由之战中继续支持乌克兰的人表示感谢。
+            [nameof(WelcomeTitle)] = "欢迎使用 {0}！",
+            [nameof(WelcomeMessage)] = """
+                本应用免费且开源。如果你觉得它好用，欢迎到 GitHub 仓库点个 Star 支持一下，也欢迎推荐给身边的朋友。
 
-                点击“了解更多”以寻找你可以提供帮助的途径。
+                同样欢迎反馈问题、提出建议或贡献代码，一起来完善本应用！
+
+                {0}
                 """,
-            [nameof(LearnMoreButton)] = "了解更多",
+            [nameof(OpenProjectButton)] = "前往仓库",
             [nameof(FFmpegMissingTitle)] = "缺少 FFmpeg",
             [nameof(FFmpegMissingMessage)] = """
                 找不到或无法启动 {0} 内置的 FFmpeg 可执行文件。下载视频需要它。

@@ -12,7 +12,8 @@
     <ApplicationTitle>YoutubeDownloader</ApplicationTitle>
     <ApplicationId>io.github.miemiemethod.youtubedownloader</ApplicationId>
     <ApplicationDisplayVersion>$(Version)</ApplicationDisplayVersion>
-    <ApplicationVersion>3</ApplicationVersion>
+    <!-- Android version code: major * 10000 + minor * 100 + patch (e.g. 1.0.3 -> 10003) -->
+    <ApplicationVersion>$([MSBuild]::Add($([MSBuild]::Add($([MSBuild]::Multiply($([System.Version]::Parse('$(Version)').Major), 10000)), $([MSBuild]::Multiply($([System.Version]::Parse('$(Version)').Minor), 100)))), $([System.Version]::Parse('$(Version)').Build)))</ApplicationVersion>
 
     <!-- Produce plain APKs (instead of AAB) that can be installed directly on devices -->
     <AndroidPackageFormat>apk</AndroidPackageFormat>

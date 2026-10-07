@@ -94,13 +94,15 @@ public partial class LocalizationManager
         [nameof(DownloadButton)] = "HERUNTERLADEN",
         [nameof(CancelButton)] = "ABBRECHEN",
         // Dialog messages
-        [nameof(UkraineSupportTitle)] = "Danke für Ihre Unterstützung der Ukraine!",
-        [nameof(UkraineSupportMessage)] = """
-            Während Russland einen Vernichtungskrieg gegen mein Land führt, bin ich jedem dankbar, der weiterhin zur Ukraine in unserem Kampf für die Freiheit steht.
+        [nameof(WelcomeTitle)] = "Willkommen bei {0}!",
+        [nameof(WelcomeMessage)] = """
+            Diese App ist kostenlos und quelloffen. Wenn sie Ihnen gefällt, unterstützen Sie sie gerne mit einem Stern für das Repository auf GitHub und empfehlen Sie sie weiter.
 
-            Klicken Sie auf MEHR ERFAHREN um Wege zu finden, wie Sie helfen können.
+            Fehlerberichte, Vorschläge und Code-Beiträge sind jederzeit willkommen. Lassen Sie uns diese App gemeinsam verbessern!
+
+            {0}
             """,
-        [nameof(LearnMoreButton)] = "MEHR ERFAHREN",
+        [nameof(OpenProjectButton)] = "GITHUB ÖFFNEN",
         [nameof(FFmpegMissingTitle)] = "FFmpeg fehlt",
         [nameof(FFmpegMissingMessage)] = """
             Die mit {0} gebündelte FFmpeg-Datei konnte nicht gefunden oder gestartet werden. Sie wird zum Herunterladen von Videos benötigt.

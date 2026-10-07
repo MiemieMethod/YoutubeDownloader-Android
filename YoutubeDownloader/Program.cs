@@ -18,5 +18,7 @@ public static class Program
 
     public static string ProjectReleasesUrl { get; } = $"{ProjectUrl}/releases";
 
+    public static string ProjectLatestReleaseUrl { get; } = $"{ProjectReleasesUrl}/latest";
+
     public static string UpstreamProjectUrl { get; } = "https://github.com/Tyrrrz/YoutubeDownloader";
 }

@@ -95,13 +95,15 @@ public partial class LocalizationManager
         [nameof(DownloadButton)] = "TÉLÉCHARGER",
         [nameof(CancelButton)] = "ANNULER",
         // Dialog messages
-        [nameof(UkraineSupportTitle)] = "Merci de soutenir l'Ukraine !",
-        [nameof(UkraineSupportMessage)] = """
-            Alors que la Russie mène une guerre génocidaire contre mon pays, je suis reconnaissant envers tous ceux qui continuent à soutenir l'Ukraine dans notre combat pour la liberté.
+        [nameof(WelcomeTitle)] = "Bienvenue dans {0} !",
+        [nameof(WelcomeMessage)] = """
+            Cette application est gratuite et open source. Si elle vous est utile, soutenez-la en ajoutant une étoile à son dépôt sur GitHub et en la faisant connaître autour de vous.
 
-            Cliquez sur EN SAVOIR PLUS pour trouver des moyens d'aider.
+            Les rapports de bugs, les suggestions et les contributions au code sont les bienvenus. Améliorons cette application ensemble !
+
+            {0}
             """,
-        [nameof(LearnMoreButton)] = "EN SAVOIR PLUS",
+        [nameof(OpenProjectButton)] = "OUVRIR GITHUB",
         [nameof(FFmpegMissingTitle)] = "FFmpeg est manquant",
         [nameof(FFmpegMissingMessage)] = """
             L'exécutable FFmpeg fourni avec {0} est introuvable ou n'a pas pu être lancé. Il est requis pour télécharger des vidéos.

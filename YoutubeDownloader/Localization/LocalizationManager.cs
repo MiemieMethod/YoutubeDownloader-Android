@@ -152,9 +152,9 @@ public partial class LocalizationManager
 
     // ---- Dialog messages ----
 
-    public string UkraineSupportTitle => Get();
-    public string UkraineSupportMessage => Get();
-    public string LearnMoreButton => Get();
+    public string WelcomeTitle => Get();
+    public string WelcomeMessage => Get();
+    public string OpenProjectButton => Get();
     public string FFmpegMissingTitle => Get();
     public string FFmpegMissingMessage => Get();
     public string NothingFoundTitle => Get();

@@ -91,13 +91,15 @@ public partial class LocalizationManager
             [nameof(DownloadButton)] = "ЗАВАНТАЖИТИ",
             [nameof(CancelButton)] = "СКАСУВАТИ",
             // Dialog messages
-            [nameof(UkraineSupportTitle)] = "Дякуємо за підтримку України!",
-            [nameof(UkraineSupportMessage)] = """
-                Поки Росія веде геноцидну війну проти моєї країни, я вдячний кожному, хто продовжує підтримувати Україну у нашій боротьбі за свободу.
+            [nameof(WelcomeTitle)] = "Ласкаво просимо до {0}!",
+            [nameof(WelcomeMessage)] = """
+                Цей застосунок безкоштовний і має відкритий код. Якщо він вам корисний, підтримайте його зіркою для репозиторію на GitHub і розкажіть про нього іншим.
 
-                Натисніть ДІЗНАТИСЬ БІЛЬШЕ, щоб знайти способи допомогти.
+                Повідомлення про помилки, пропозиції та внески в код завжди вітаються. Робімо цей застосунок кращим разом!
+
+                {0}
                 """,
-            [nameof(LearnMoreButton)] = "ДІЗНАТИСЬ БІЛЬШЕ",
+            [nameof(OpenProjectButton)] = "ВІДКРИТИ GITHUB",
             [nameof(FFmpegMissingTitle)] = "FFmpeg відсутній",
             [nameof(FFmpegMissingMessage)] = """
                 Не вдалося знайти або запустити виконуваний файл FFmpeg, що постачається з {0}. Він потрібен для завантаження відео.
