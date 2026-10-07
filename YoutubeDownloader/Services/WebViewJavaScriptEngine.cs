@@ -17,6 +17,37 @@ public class WebViewJavaScriptEngine : IJavaScriptEngine
     private volatile AndroidWebView? _webView;
     private volatile TaskCompletionSource<string?>? _pendingEvaluation;
 
+    // Unlike MainThread.InvokeOnMainThreadAsync(), this doesn't resume the caller on the main thread.
+    // Otherwise, the code that awaits the evaluation (including YoutubeExplode's) would continue
+    // running on the main thread, where network operations are not allowed.
+    private static Task<T> InvokeOnMainThreadAsync<T>(Func<T> function)
+    {
+        var completion = new TaskCompletionSource<T>(
+            TaskCreationOptions.RunContinuationsAsynchronously
+        );
+
+        MainThread.BeginInvokeOnMainThread(() =>
+        {
+            try
+            {
+                completion.TrySetResult(function());
+            }
+            catch (Exception ex)
+            {
+                completion.TrySetException(ex);
+            }
+        });
+
+        return completion.Task;
+    }
+
+    private static Task InvokeOnMainThreadAsync(Action action) =>
+        InvokeOnMainThreadAsync(() =>
+        {
+            action();
+            return true;
+        });
+
     private async Task<AndroidWebView> GetWebViewAsync(CancellationToken cancellationToken)
     {
         if (_webView is not null)
@@ -24,7 +55,7 @@ public class WebViewJavaScriptEngine : IJavaScriptEngine
 
         var pageLoad = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
 
-        var webView = await MainThread.InvokeOnMainThreadAsync(() =>
+        var webView = await InvokeOnMainThreadAsync(() =>
         {
             var view = new AndroidWebView(Platform.AppContext);
 
@@ -70,7 +101,7 @@ public class WebViewJavaScriptEngine : IJavaScriptEngine
 
         try
         {
-            await MainThread.InvokeOnMainThreadAsync(webView.Destroy);
+            await InvokeOnMainThreadAsync(webView.Destroy);
         }
         catch
         {
@@ -107,7 +138,7 @@ public class WebViewJavaScriptEngine : IJavaScriptEngine
 
             _pendingEvaluation = evaluation;
 
-            await MainThread.InvokeOnMainThreadAsync(() =>
+            await InvokeOnMainThreadAsync(() =>
                 webView.EvaluateJavascript(script, new ValueCallback(evaluation))
             );
 

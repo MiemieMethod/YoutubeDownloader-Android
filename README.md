@@ -8,9 +8,9 @@
 
 ### 安装
 
-- 直接安装仓库中的 [`dist/YoutubeDownloader-1.0.1.apk`](dist/YoutubeDownloader-1.0.1.apk)。这是通用 APK，支持 arm64-v8a、armeabi-v7a 和 x86_64 设备。也可以从 [Releases](https://github.com/MiemieMethod/YoutubeDownloader-Android/releases) 或 GitHub Actions 的构建产物中下载。
+- 直接安装仓库中的 [`dist/YoutubeDownloader-1.0.2.apk`](dist/YoutubeDownloader-1.0.2.apk)。这是通用 APK，支持 arm64-v8a、armeabi-v7a 和 x86_64 设备。也可以从 [Releases](https://github.com/MiemieMethod/YoutubeDownloader-Android/releases) 或 GitHub Actions 的构建产物中下载。
 - 需要 Android 5.0（API 21）或更高版本。安装时需要允许“安装未知来源应用”。
-- 不同来源的 APK 可能使用不同的签名密钥。换用其他来源的 APK 时，需要先卸载旧版本。`dist/` 中的 1.0.1 与之前的 1.0.0 签名不同，升级前需要先卸载 1.0.0。
+- 不同来源的 APK 可能使用不同的签名密钥。换用其他来源的 APK 时，需要先卸载旧版本。`dist/` 中的 1.0.2 与之前的 1.0.1、1.0.0 签名不同，升级前需要先卸载旧版本，卸载后需要重新登录和设置。
 
 ### 功能
 
@@ -79,7 +79,7 @@ GitHub Actions（`.github/workflows/main.yml`）会在每次推送时自动构�
 
 This is an Android port of [YoutubeDownloader](https://github.com/Tyrrrz/YoutubeDownloader). It is built with .NET MAUI on top of [YoutubeExplode](https://github.com/Tyrrrz/YoutubeExplode) and YoutubeExplode.Converter. A minimal FFmpeg build for Android is bundled with the app.
 
-- **Install**: use [`dist/YoutubeDownloader-1.0.1.apk`](dist/YoutubeDownloader-1.0.1.apk), or download the APK from Releases or the GitHub Actions artifacts. It is a universal APK for arm64-v8a, armeabi-v7a and x86_64 devices and needs Android 5.0 or later.
+- **Install**: use [`dist/YoutubeDownloader-1.0.2.apk`](dist/YoutubeDownloader-1.0.2.apk), or download the APK from Releases or the GitHub Actions artifacts. It is a universal APK for arm64-v8a, armeabi-v7a and x86_64 devices and needs Android 5.0 or later. Version 1.0.2 is signed with a different key than earlier versions, so uninstall the old version first.
 - **Features**: the same as the desktop app.
   - Download videos, playlists, channels and search results.
   - Choose the format and quality.

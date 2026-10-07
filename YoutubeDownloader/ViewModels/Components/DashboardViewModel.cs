@@ -173,6 +173,15 @@ public partial class DashboardViewModel : ViewModelBase
             _ => ex.ToString(),
         };
 
+    // YoutubeExplode (and other libraries) don't use ConfigureAwait(false), so their code would
+    // resume on the main thread if called from it. On Android, besides blocking the UI, this crashes
+    // with NetworkOnMainThreadException whenever an HTTP response is disposed before its body is
+    // fully read (e.g. when YoutubeExplode verifies the length of streams), because the system's HTTP
+    // stack then reads the rest of the body from the network. Run such operations in background.
+    private static Task<T> RunInBackgroundAsync<T>(Func<Task<T>> function) => Task.Run(function);
+
+    private static Task RunInBackgroundAsync(Func<Task> function) => Task.Run(function);
+
     private async void EnqueueDownload(DownloadViewModel download, int position = 0)
     {
         Downloads.Insert(position, download);
@@ -199,34 +208,43 @@ public partial class DashboardViewModel : ViewModelBase
 
             var downloadOption =
                 download.DownloadOption
-                ?? await downloader.GetBestDownloadOptionAsync(
-                    download.Video!.Id,
-                    download.DownloadPreference!,
-                    _settingsService.ShouldInjectLanguageSpecificAudioStreams,
-                    download.CancellationToken
+                ?? await RunInBackgroundAsync(() =>
+                    downloader.GetBestDownloadOptionAsync(
+                        download.Video!.Id,
+                        download.DownloadPreference!,
+                        _settingsService.ShouldInjectLanguageSpecificAudioStreams,
+                        download.CancellationToken
+                    )
                 );
 
             Directory.CreateDirectory(workDirPath);
             var tempFilePath = Path.Combine(workDirPath, "video." + downloadOption.Container.Name);
 
-            await downloader.DownloadVideoAsync(
-                tempFilePath,
-                download.Video!,
-                downloadOption,
-                _settingsService.ShouldInjectSubtitles,
-                FFmpeg.CliFilePath,
-                download.Progress.Merge(progress),
-                download.CancellationToken
+            var shouldInjectSubtitles = _settingsService.ShouldInjectSubtitles;
+            var downloadProgress = download.Progress.Merge(progress);
+
+            await RunInBackgroundAsync(() =>
+                downloader.DownloadVideoAsync(
+                    tempFilePath,
+                    download.Video!,
+                    downloadOption,
+                    shouldInjectSubtitles,
+                    FFmpeg.CliFilePath,
+                    downloadProgress,
+                    download.CancellationToken
+                )
             );
 
             if (_settingsService.ShouldInjectTags)
             {
                 try
                 {
-                    await tagInjector.InjectTagsAsync(
-                        tempFilePath,
-                        download.Video!,
-                        download.CancellationToken
+                    await RunInBackgroundAsync(() =>
+                        tagInjector.InjectTagsAsync(
+                            tempFilePath,
+                            download.Video!,
+                            download.CancellationToken
+                        )
                     );
                 }
                 catch
@@ -244,10 +262,8 @@ public partial class DashboardViewModel : ViewModelBase
                         downloadOption.Container
                     );
 
-            var savedFile = await _downloadStorageService.SaveAsync(
-                tempFilePath,
-                fileName,
-                download.CancellationToken
+            var savedFile = await RunInBackgroundAsync(() =>
+                _downloadStorageService.SaveAsync(tempFilePath, fileName, download.CancellationToken)
             );
 
             download.SavedFile = savedFile;
@@ -309,7 +325,7 @@ public partial class DashboardViewModel : ViewModelBase
             {
                 try
                 {
-                    queryResults.Add(await resolver.ResolveAsync(query));
+                    queryResults.Add(await RunInBackgroundAsync(() => resolver.ResolveAsync(query)));
                 }
                 // If it's not the only query in the list, don't interrupt the process
                 // and report the error via an async notification instead of a sync dialog.
@@ -335,9 +351,14 @@ public partial class DashboardViewModel : ViewModelBase
 
                 using var downloader = new VideoDownloader(_settingsService.LastAuthCookies);
 
-                var downloadOptions = await downloader.GetDownloadOptionsAsync(
-                    video.Id,
-                    _settingsService.ShouldInjectLanguageSpecificAudioStreams
+                var shouldInjectLanguageSpecificAudioStreams =
+                    _settingsService.ShouldInjectLanguageSpecificAudioStreams;
+
+                var downloadOptions = await RunInBackgroundAsync(() =>
+                    downloader.GetDownloadOptionsAsync(
+                        video.Id,
+                        shouldInjectLanguageSpecificAudioStreams
+                    )
                 );
 
                 var download = await _dialogManager.ShowDialogAsync(
