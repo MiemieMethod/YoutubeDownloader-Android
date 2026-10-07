@@ -1,0 +1,114 @@
+name: main
+
+on:
+  push:
+    branches:
+      - "**"
+    tags:
+      - "v*"
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Install Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Install build tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y nasm
+
+      - name: Restore FFmpeg from cache
+        id: ffmpeg-cache
+        uses: actions/cache@v4
+        with:
+          path: ffmpeg/out
+          key: ffmpeg-${{ hashFiles('ffmpeg/build.sh', 'ffmpeg/patches/**') }}
+
+      - name: Build FFmpeg
+        if: steps.ffmpeg-cache.outputs.cache-hit != 'true'
+        run: ffmpeg/build.sh
+
+      - name: Install MAUI workload
+        run: dotnet workload install maui-android
+
+      - name: Publish app
+        env:
+          # Optional: configure these secrets to sign the APK with your own key.
+          # Without them, the APK is signed with an auto-generated debug key.
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          args=()
+          if [ -n "$ANDROID_KEYSTORE_BASE64" ]; then
+            echo "$ANDROID_KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/release.keystore"
+            args+=(
+              -p:AndroidKeyStore=true
+              -p:AndroidSigningKeyStore="$RUNNER_TEMP/release.keystore"
+              -p:AndroidSigningKeyAlias="$ANDROID_KEY_ALIAS"
+              -p:AndroidSigningStorePass=env:ANDROID_KEYSTORE_PASSWORD
+              -p:AndroidSigningKeyPass=env:ANDROID_KEY_PASSWORD
+            )
+          fi
+
+          dotnet publish YoutubeDownloader/YoutubeDownloader.csproj \
+            -f net10.0-android \
+            -c Release \
+            -o publish \
+            "${args[@]}"
+
+          rm -f "$RUNNER_TEMP/release.keystore"
+          mkdir -p artifacts
+          cp publish/*-Signed.apk artifacts/YoutubeDownloader.apk
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: YoutubeDownloader
+          path: artifacts/YoutubeDownloader.apk
+          if-no-files-found: error
+
+  release:
+    if: ${{ github.event_name == 'push' && github.ref_type == 'tag' }}
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: YoutubeDownloader
+
+      - name: Create release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: >
+          gh release create "${{ github.ref_name }}" YoutubeDownloader.apk
+          --repo "${{ github.repository }}"
+          --title "${{ github.ref_name }}"
+          --generate-notes

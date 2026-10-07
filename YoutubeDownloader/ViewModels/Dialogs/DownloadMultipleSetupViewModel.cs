@@ -9,6 +9,7 @@ using YoutubeDownloader.Services;
 using YoutubeDownloader.ViewModels.Components;
 using YoutubeExplode.Videos;
 using YoutubeExplode.Videos.Streams;
+using Container = YoutubeExplode.Videos.Streams.Container;
 
 namespace YoutubeDownloader.ViewModels.Dialogs;
 

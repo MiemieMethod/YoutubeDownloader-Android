@@ -51,23 +51,24 @@ public class DownloadService : Service
 
         var progress = (int)Math.Round(Math.Clamp(manager?.Progress ?? 0, 0, 1) * 100);
 
-        return new NotificationCompat.Builder(context, NotificationChannelId)
-            .SetSmallIcon(global::Android.Resource.Drawable.StatSysDownload)
-            .SetContentTitle(manager?.NotificationTitle ?? Program.Name)
-            .SetContentText(manager?.NotificationText)
-            .SetContentIntent(pendingIntent)
-            .SetOngoing(true)
-            .SetOnlyAlertOnce(true)
-            .SetSilent(true)
-            .SetProgress(100, progress, progress <= 0)
-            .SetForegroundServiceBehavior(NotificationCompat.ForegroundServiceImmediate)
-            .Build()!;
+        var builder = new NotificationCompat.Builder(context, NotificationChannelId);
+        builder.SetSmallIcon(global::Android.Resource.Drawable.StatSysDownload);
+        builder.SetContentTitle(manager?.NotificationTitle ?? Program.Name);
+        builder.SetContentText(manager?.NotificationText);
+        builder.SetContentIntent(pendingIntent);
+        builder.SetOngoing(true);
+        builder.SetOnlyAlertOnce(true);
+        builder.SetSilent(true);
+        builder.SetProgress(100, progress, progress <= 0);
+        builder.SetForegroundServiceBehavior(NotificationCompat.ForegroundServiceImmediate);
+
+        return builder.Build()!;
     }
 
     internal static void UpdateNotification(DownloadServiceManager manager)
     {
         var context = Platform.AppContext;
-        var notificationManager = NotificationManagerCompat.From(context);
+        var notificationManager = NotificationManagerCompat.From(context)!;
 
         // Posting notifications requires a runtime permission on Android 13+
         if (!notificationManager.AreNotificationsEnabled())
@@ -109,7 +110,7 @@ public class DownloadService : Service
         return StartCommandResult.NotSticky;
     }
 
-    public override void OnTimeout(int startId, int fgsType)
+    public override void OnTimeout(int startId, ForegroundService fgsType)
     {
         // The system limits how long data sync foreground services can run (Android 15+)
         Manager?.OnServiceStopped();

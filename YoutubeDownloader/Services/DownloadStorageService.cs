@@ -1,4 +1,5 @@
-using System.Text;
+using StringBuilder = System.Text.StringBuilder;
+using Encoding = System.Text.Encoding;
 using Android.Content;
 using Android.Media;
 using Android.OS;
@@ -165,7 +166,7 @@ public class DownloadStorageService(SettingsService settingsService)
                     result.UnionWith(Directory.EnumerateFiles(dirPath).Select(Path.GetFileName)!);
             }
         }
-        catch (Exception ex) when (ex is not OperationCanceledException)
+        catch (Exception ex) when (ex is not System.OperationCanceledException)
         {
             // Not being able to list existing files is not critical
         }
