@@ -14,8 +14,8 @@ public class WebViewJavaScriptEngine : IJavaScriptEngine
 
     private readonly SemaphoreSlim _lock = new(1, 1);
 
-    private AndroidWebView? _webView;
-    private TaskCompletionSource<string?>? _pendingEvaluation;
+    private volatile AndroidWebView? _webView;
+    private volatile TaskCompletionSource<string?>? _pendingEvaluation;
 
     private async Task<AndroidWebView> GetWebViewAsync(CancellationToken cancellationToken)
     {
@@ -126,11 +126,26 @@ public class WebViewJavaScriptEngine : IJavaScriptEngine
         }
     }
 
-    private void OnRenderProcessGone()
+    // Called on the main thread
+    private void OnRenderProcessGone(AndroidWebView? view)
     {
+        // The web view can't be used anymore, even if the renderer was killed while idle
+        // (e.g. by the system while the app was in background), so a new one is created next time
+        if (view is not null && ReferenceEquals(_webView, view))
+            _webView = null;
+
         _pendingEvaluation?.TrySetException(
             new InvalidOperationException("The web view used to run JavaScript has crashed.")
         );
+
+        try
+        {
+            view?.Destroy();
+        }
+        catch
+        {
+            // Ignore
+        }
     }
 
     private class ValueCallback(TaskCompletionSource<string?> evaluation)
@@ -154,7 +169,7 @@ public class WebViewJavaScriptEngine : IJavaScriptEngine
         // (for example, due to running out of memory)
         public override bool OnRenderProcessGone(AndroidWebView? view, RenderProcessGoneDetail? detail)
         {
-            engine.OnRenderProcessGone();
+            engine.OnRenderProcessGone(view);
             pageLoad.TrySetException(
                 new InvalidOperationException("The web view used to run JavaScript has crashed.")
             );
