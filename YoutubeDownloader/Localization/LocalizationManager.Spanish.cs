@@ -122,6 +122,7 @@ public partial class LocalizationManager
             [nameof(SelectAllTooltip)] = "Seleccionar todo",
             [nameof(CopyButton)] = "COPIAR",
             [nameof(NoAppToOpenFileMessage)] = "No se encontró ninguna aplicación para abrir este archivo",
+            [nameof(SignInRequiredMessage)] = "YouTube requiere iniciar sesión para acceder a este video (por ejemplo, para confirmar que no eres un bot). Inicia sesión con tu cuenta de Google mediante el botón de autenticación (icono de persona con llave) en la parte superior de la pantalla principal y vuelve a intentarlo.",
             [nameof(StoragePermissionDeniedMessage)] = "Se requiere permiso de almacenamiento para guardar los archivos descargados",
             [nameof(UpdateAvailableMessage)] = "{0} v{1} está disponible",
             [nameof(UpdateCheckFailedMessage)] = "Error al buscar actualizaciones",

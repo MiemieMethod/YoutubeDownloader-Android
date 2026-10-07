@@ -117,6 +117,7 @@ public partial class LocalizationManager
             [nameof(SelectAllTooltip)] = "全选",
             [nameof(CopyButton)] = "复制",
             [nameof(NoAppToOpenFileMessage)] = "未找到可打开此文件的应用",
+            [nameof(SignInRequiredMessage)] = "YouTube 要求登录后才能访问此视频（例如需要确认你不是机器人）。请点击主界面顶部的身份验证按钮（带钥匙的人像图标）登录 Google 账号，然后重试。",
             [nameof(StoragePermissionDeniedMessage)] = "需要存储权限才能保存下载的文件",
             [nameof(UpdateAvailableMessage)] = "{0} v{1} 已发布",
             [nameof(UpdateCheckFailedMessage)] = "检查更新失败",

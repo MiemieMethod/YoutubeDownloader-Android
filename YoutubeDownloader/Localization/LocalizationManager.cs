@@ -173,6 +173,7 @@ public partial class LocalizationManager
     public string SelectAllTooltip => Get();
     public string CopyButton => Get();
     public string NoAppToOpenFileMessage => Get();
+    public string SignInRequiredMessage => Get();
     public string StoragePermissionDeniedMessage => Get();
     public string UpdateAvailableMessage => Get();
     public string UpdateCheckFailedMessage => Get();

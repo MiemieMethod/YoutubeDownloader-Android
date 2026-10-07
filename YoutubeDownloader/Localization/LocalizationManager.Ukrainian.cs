@@ -118,6 +118,7 @@ public partial class LocalizationManager
             [nameof(SelectAllTooltip)] = "Вибрати все",
             [nameof(CopyButton)] = "КОПІЮВАТИ",
             [nameof(NoAppToOpenFileMessage)] = "Не знайдено програми для відкриття цього файлу",
+            [nameof(SignInRequiredMessage)] = "YouTube вимагає входу в обліковий запис для доступу до цього відео (наприклад, щоб підтвердити, що ви не бот). Увійдіть у свій обліковий запис Google за допомогою кнопки автентифікації (значок людини з ключем) у верхній частині головного екрана та спробуйте ще раз.",
             [nameof(StoragePermissionDeniedMessage)] = "Для збереження завантажених файлів потрібен дозвіл на доступ до сховища",
             [nameof(UpdateAvailableMessage)] = "Доступна нова версія {0} v{1}",
             [nameof(UpdateCheckFailedMessage)] = "Не вдалося перевірити наявність оновлень",

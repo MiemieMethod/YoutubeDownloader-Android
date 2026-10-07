@@ -1,3 +1,4 @@
+using YoutubeDownloader.Core.Youtube;
 using YoutubeDownloader.Framework;
 using YoutubeDownloader.Localization;
 using YoutubeDownloader.Services;
@@ -20,6 +21,9 @@ public static class MauiProgram
             );
 
         ProgressBarAssist.Register();
+
+        // Required to download videos when signed in (see YoutubeRequestHandler in Core)
+        PlayerChallengeSolver.JavaScriptEngine = new WebViewJavaScriptEngine();
 
         var services = builder.Services;
 

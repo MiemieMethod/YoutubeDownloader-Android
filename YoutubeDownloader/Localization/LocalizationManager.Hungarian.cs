@@ -118,6 +118,7 @@ public partial class LocalizationManager
             [nameof(SelectAllTooltip)] = "Összes kijelölése",
             [nameof(CopyButton)] = "MÁSOLÁS",
             [nameof(NoAppToOpenFileMessage)] = "Nem található alkalmazás a fájl megnyitásához",
+            [nameof(SignInRequiredMessage)] = "A YouTube bejelentkezést kér a videó eléréséhez (például annak megerősítéséhez, hogy nem vagy robot). Jelentkezz be Google-fiókoddal a főképernyő tetején található hitelesítés gombbal (kulcsos személy ikon), majd próbáld újra.",
             [nameof(StoragePermissionDeniedMessage)] = "A letöltött fájlok mentéséhez tárhely-hozzáférési engedély szükséges",
             [nameof(UpdateAvailableMessage)] = "Elérhető a(z) {0} v{1}",
             [nameof(UpdateCheckFailedMessage)] = "Nem sikerült frissítéseket keresni",

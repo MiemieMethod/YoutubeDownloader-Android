@@ -12,7 +12,7 @@
     <ApplicationTitle>YoutubeDownloader</ApplicationTitle>
     <ApplicationId>io.github.miemiemethod.youtubedownloader</ApplicationId>
     <ApplicationDisplayVersion>$(Version)</ApplicationDisplayVersion>
-    <ApplicationVersion>1</ApplicationVersion>
+    <ApplicationVersion>2</ApplicationVersion>
 
     <!-- Produce plain APKs (instead of AAB) that can be installed directly on devices -->
     <AndroidPackageFormat>apk</AndroidPackageFormat>

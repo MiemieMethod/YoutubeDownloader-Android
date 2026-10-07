@@ -8,6 +8,7 @@ using PowerKit.Extensions;
 using YoutubeDownloader.Core.Downloading;
 using YoutubeDownloader.Core.Resolving;
 using YoutubeDownloader.Core.Tagging;
+using YoutubeDownloader.Core.Youtube;
 using YoutubeDownloader.Framework;
 using YoutubeDownloader.Localization;
 using YoutubeDownloader.Services;
@@ -158,6 +159,20 @@ public partial class DashboardViewModel : ViewModelBase
             Downloads.Count(d => d.Status is DownloadStatus.Enqueued or DownloadStatus.Started)
         );
 
+    private string GetErrorMessage(Exception ex) =>
+        ex switch
+        {
+            // Explain how to resolve the error, since YouTube's message is not actionable in the app
+            SignInRequiredException =>
+                LocalizationManager.SignInRequiredMessage
+                    + Environment.NewLine
+                    + Environment.NewLine
+                    + ex.Message,
+            // Short error message for YouTube-related errors, full for others
+            YoutubeExplodeException => ex.Message,
+            _ => ex.ToString(),
+        };
+
     private async void EnqueueDownload(DownloadViewModel download, int position = 0)
     {
         Downloads.Insert(position, download);
@@ -244,8 +259,7 @@ public partial class DashboardViewModel : ViewModelBase
             download.Status =
                 ex is OperationCanceledException ? DownloadStatus.Canceled : DownloadStatus.Failed;
 
-            // Short error message for YouTube-related errors, full for others
-            download.ErrorMessage = ex is YoutubeExplodeException ? ex.Message : ex.ToString();
+            download.ErrorMessage = GetErrorMessage(ex);
         }
         finally
         {
@@ -305,7 +319,7 @@ public partial class DashboardViewModel : ViewModelBase
                         && queries.Length > 1
                     )
                 {
-                    _snackbarManager.Notify(ex.Message);
+                    _snackbarManager.Notify(GetErrorMessage(ex));
                 }
 
                 progress.Report(Percentage.FromFraction((i + 1.0) / queries.Length));
@@ -375,10 +389,7 @@ public partial class DashboardViewModel : ViewModelBase
             await _dialogManager.ShowDialogAsync(
                 _viewModelManager.GetMessageBoxViewModel(
                     LocalizationManager.ErrorTitle,
-                    // Short error message for YouTube-related errors, full for others
-                    ex is YoutubeExplodeException
-                        ? ex.Message
-                        : ex.ToString()
+                    GetErrorMessage(ex)
                 )
             );
         }

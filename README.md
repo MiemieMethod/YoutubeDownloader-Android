@@ -8,9 +8,9 @@
 
 ### 安装
 
-- 直接安装仓库中的 [`dist/YoutubeDownloader-1.0.0.apk`](dist/YoutubeDownloader-1.0.0.apk)。这是通用 APK，支持 arm64-v8a、armeabi-v7a 和 x86_64 设备。也可以从 [Releases](https://github.com/MiemieMethod/YoutubeDownloader-Android/releases) 或 GitHub Actions 的构建产物中下载。
+- 直接安装仓库中的 [`dist/YoutubeDownloader-1.0.1.apk`](dist/YoutubeDownloader-1.0.1.apk)。这是通用 APK，支持 arm64-v8a、armeabi-v7a 和 x86_64 设备。也可以从 [Releases](https://github.com/MiemieMethod/YoutubeDownloader-Android/releases) 或 GitHub Actions 的构建产物中下载。
 - 需要 Android 5.0（API 21）或更高版本。安装时需要允许“安装未知来源应用”。
-- 不同来源的 APK 可能使用不同的签名密钥。换用其他来源的 APK 时，需要先卸载旧版本。
+- 不同来源的 APK 可能使用不同的签名密钥。换用其他来源的 APK 时，需要先卸载旧版本。`dist/` 中的 1.0.1 与之前的 1.0.0 签名不同，升级前需要先卸载 1.0.0。
 
 ### 功能
 
@@ -33,6 +33,12 @@
 - 下载在前台服务中进行，通知栏会显示进度。切换到后台后下载也会继续。
 - 文件默认保存到 `Download/YoutubeDownloader`，也可以在设置中改为任意其他文件夹。
 - 下载完成后可以直接打开或分享文件。
+
+### 关于登录
+
+YouTube 经常要求登录后才能获取视频（提示“确认你不是机器人”），使用 VPN、代理或共享网络时尤其常见。如果出现这类错误，请点击主界面顶部的身份验证按钮登录 Google 账号，然后重试。
+
+目前 YoutubeExplode 6.6.2 在带登录信息时会被 YouTube 拒绝，报错 `400 Bad Request`（上游问题 [Tyrrrz/YoutubeExplode#969](https://github.com/Tyrrrz/YoutubeExplode/issues/969)）。本应用参照 yt-dlp 的做法绕过了这个问题：登录后改用支持 Cookie 的 TV 客户端获取视频流，并在隐藏的 WebView 中运行 yt-dlp 的 [EJS](https://github.com/yt-dlp/ejs) 脚本，解出 YouTube 播放器的签名和 `n` 参数。如果 TV 客户端不可用，会退回到不带登录信息的原始客户端。相关代码在 `YoutubeDownloader.Core/Youtube/` 中。
 
 与桌面版的差异：
 
@@ -65,7 +71,7 @@ GitHub Actions（`.github/workflows/main.yml`）会在每次推送时自动构�
 
 ### 项目结构
 
-- `YoutubeDownloader.Core/`：下载核心，从上游移植，只为安卓做了少量调整（Cookie 处理、文件名规则、FFmpeg 路径）。
+- `YoutubeDownloader.Core/`：下载核心，从上游移植，只为安卓做了少量调整（Cookie 处理、文件名规则、FFmpeg 路径）。`Youtube/` 目录中是登录状态下获取视频流的处理（TV 客户端和 EJS 挑战求解）。
 - `YoutubeDownloader/`：.NET MAUI 安卓应用，包括视图模型、页面和本地化，以及存储、通知、分享链接等安卓平台代码。
 - `ffmpeg/`：FFmpeg 的安卓构建脚本和补丁。
 
@@ -73,7 +79,7 @@ GitHub Actions（`.github/workflows/main.yml`）会在每次推送时自动构�
 
 This is an Android port of [YoutubeDownloader](https://github.com/Tyrrrz/YoutubeDownloader). It is built with .NET MAUI on top of [YoutubeExplode](https://github.com/Tyrrrz/YoutubeExplode) and YoutubeExplode.Converter. A minimal FFmpeg build for Android is bundled with the app.
 
-- **Install**: use [`dist/YoutubeDownloader-1.0.0.apk`](dist/YoutubeDownloader-1.0.0.apk), or download the APK from Releases or the GitHub Actions artifacts. It is a universal APK for arm64-v8a, armeabi-v7a and x86_64 devices and needs Android 5.0 or later.
+- **Install**: use [`dist/YoutubeDownloader-1.0.1.apk`](dist/YoutubeDownloader-1.0.1.apk), or download the APK from Releases or the GitHub Actions artifacts. It is a universal APK for arm64-v8a, armeabi-v7a and x86_64 devices and needs Android 5.0 or later.
 - **Features**: the same as the desktop app.
   - Download videos, playlists, channels and search results.
   - Choose the format and quality.
@@ -86,6 +92,7 @@ This is an Android port of [YoutubeDownloader](https://github.com/Tyrrrz/Youtube
   - Downloads keep running in the background, with a progress notification.
   - Choose a custom download folder.
   - Open or share downloaded files.
+- **Signing in**: YouTube often refuses to serve videos without signing in ("confirm you're not a bot"), especially over VPNs or shared networks. Sign in with the authentication button at the top of the main screen. YoutubeExplode 6.6.2 fails with `400 Bad Request` when cookies are used ([Tyrrrz/YoutubeExplode#969](https://github.com/Tyrrrz/YoutubeExplode/issues/969)). To work around this, the app follows yt-dlp's approach: signed-in requests use the cookie-capable TV client, and the player's signature and `n` challenges are solved by yt-dlp's [EJS](https://github.com/yt-dlp/ejs) scripts running in a hidden WebView. See `YoutubeDownloader.Core/Youtube/`.
 - **Build**: run `ffmpeg/build.sh`, which needs the Android NDK and `nasm`. Then run `dotnet publish YoutubeDownloader/YoutubeDownloader.csproj -f net10.0-android -c Release`.
 
 ## License
@@ -94,4 +101,5 @@ This is an Android port of [YoutubeDownloader](https://github.com/Tyrrrz/Youtube
 - [YoutubeExplode](https://github.com/Tyrrrz/YoutubeExplode) is licensed under the MIT license.
 - The bundled FFmpeg is licensed under LGPL 2.1 or later. It is built without GPL or non-free components, from the sources and patch referenced in [`ffmpeg/build.sh`](ffmpeg/build.sh) and [`ffmpeg/patches`](ffmpeg/patches).
 - LAME is licensed under the LGPL. libogg, libvorbis and Opus are licensed under BSD licenses.
+- The JavaScript challenge solver from [yt-dlp/ejs](https://github.com/yt-dlp/ejs) (release 0.8.0, `YoutubeDownloader.Core/Youtube/Ejs/`) is released under the Unlicense. It bundles [meriyah](https://github.com/meriyah/meriyah) (ISC license) and [astring](https://github.com/davidbonnet/astring) (MIT license). Their license texts are kept in the file headers.
 - [Material Design Icons](https://pictogrammers.com/library/mdi/) are licensed under the Apache License 2.0.
