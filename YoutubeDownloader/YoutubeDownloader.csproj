@@ -1,0 +1,61 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0-android</TargetFramework>
+    <SupportedOSPlatformVersion>21.0</SupportedOSPlatformVersion>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>YoutubeDownloader</RootNamespace>
+    <UseMaui>true</UseMaui>
+    <SingleProject>true</SingleProject>
+    <MauiXamlInflator>SourceGen</MauiXamlInflator>
+    <MauiStrictXamlCompilation>true</MauiStrictXamlCompilation>
+
+    <ApplicationTitle>YoutubeDownloader</ApplicationTitle>
+    <ApplicationId>io.github.miemiemethod.youtubedownloader</ApplicationId>
+    <ApplicationDisplayVersion>$(Version)</ApplicationDisplayVersion>
+    <ApplicationVersion>1</ApplicationVersion>
+
+    <!-- Produce plain APKs (instead of AAB) that can be installed directly on devices -->
+    <AndroidPackageFormat>apk</AndroidPackageFormat>
+    <RuntimeIdentifiers>android-arm64;android-arm;android-x64</RuntimeIdentifiers>
+
+    <!-- TagLib# and some of the other dependencies rely on reflection -->
+    <TrimMode>partial</TrimMode>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#343838" />
+    <MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#343838" BaseSize="128,128" />
+    <MauiFont Include="Resources\Fonts\*" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Cogwheel" />
+    <PackageReference Include="CommunityToolkit.Mvvm" />
+    <PackageReference Include="Microsoft.Maui.Controls" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\YoutubeDownloader.Core\YoutubeDownloader.Core.csproj" />
+  </ItemGroup>
+
+  <!--
+    FFmpeg is bundled as a native "library" so that Android extracts it into the app's native library
+    directory, which is the only location from which apps are allowed to run executables.
+    Build it with `ffmpeg/build.sh` before building the app.
+  -->
+  <PropertyGroup>
+    <FFmpegOutputDir>$(MSBuildThisFileDirectory)..\ffmpeg\out\</FFmpegOutputDir>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <AndroidNativeLibrary Include="$(FFmpegOutputDir)arm64-v8a\libffmpeg.so" Abi="arm64-v8a" />
+    <AndroidNativeLibrary Include="$(FFmpegOutputDir)armeabi-v7a\libffmpeg.so" Abi="armeabi-v7a" />
+    <AndroidNativeLibrary Include="$(FFmpegOutputDir)x86_64\libffmpeg.so" Abi="x86_64" />
+  </ItemGroup>
+
+  <Target Name="EnsureFFmpegIsBuilt" BeforeTargets="BeforeBuild">
+    <Error
+      Condition="!Exists('%(AndroidNativeLibrary.Identity)')"
+      Text="FFmpeg binary '%(AndroidNativeLibrary.Identity)' was not found. Run 'ffmpeg/build.sh' to build FFmpeg for Android first." />
+  </Target>
+</Project>
