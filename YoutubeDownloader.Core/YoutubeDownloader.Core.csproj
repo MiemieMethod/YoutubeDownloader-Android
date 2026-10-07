@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <IsTrimmable>true</IsTrimmable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Gress" />
+    <PackageReference Include="JsonExtensions" />
+    <PackageReference Include="PowerKit" />
+    <PackageReference Include="TagLibSharp" />
+    <PackageReference Include="YoutubeExplode" />
+    <PackageReference Include="YoutubeExplode.Converter" />
+  </ItemGroup>
+
+  <!-- yt-dlp's JavaScript challenge solver (https://github.com/yt-dlp/ejs, release 0.8.0) -->
+  <ItemGroup>
+    <EmbeddedResource Include="Youtube\Ejs\yt.solver.lib.min.js" LogicalName="Ejs.yt.solver.lib.min.js" />
+    <EmbeddedResource Include="Youtube\Ejs\yt.solver.core.min.js" LogicalName="Ejs.yt.solver.core.min.js" />
+  </ItemGroup>
+</Project>

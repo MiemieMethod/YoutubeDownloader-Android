@@ -426,3 +426,11 @@ FodyWeavers.xsd
 
 # Official VS Code C# Dev Kit Extension exclusion
 #*.lscache
+
+# FFmpeg Android build work directory (sources and intermediate files)
+ffmpeg/.build/
+
+# APK signing keys and generated signing secrets
+*.keystore
+*.jks
+signing-secrets/

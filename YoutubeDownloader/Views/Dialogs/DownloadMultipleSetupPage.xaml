@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="YoutubeDownloader.Views.Dialogs.DownloadMultipleSetupPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:converters="clr-namespace:YoutubeDownloader.Converters"
+    xmlns:dialogs="clr-namespace:YoutubeDownloader.ViewModels.Dialogs"
+    xmlns:framework="clr-namespace:YoutubeDownloader.Framework"
+    x:DataType="dialogs:DownloadMultipleSetupViewModel">
+    <Grid RowDefinitions="Auto,*,Auto,Auto">
+        <!--  Title bar  -->
+        <Grid
+            Grid.Row="0"
+            ColumnDefinitions="Auto,*,Auto,Auto"
+            ColumnSpacing="8"
+            Style="{StaticResource DialogTitleBar}">
+            <Button
+                Grid.Column="0"
+                Command="{Binding CloseCommand}"
+                SemanticProperties.Description="{Binding LocalizationManager.CancelButton}"
+                Style="{StaticResource HeaderIconButton}"
+                Text="{x:Static framework:MaterialIcons.Close}" />
+            <Label
+                Grid.Column="1"
+                Style="{StaticResource DialogTitleLabel}"
+                Text="{Binding Title}" />
+            <Button
+                Grid.Column="2"
+                Command="{Binding CopyTitleCommand}"
+                SemanticProperties.Description="{Binding LocalizationManager.CopyMenuItem}"
+                Style="{StaticResource HeaderIconButton}"
+                Text="{x:Static framework:MaterialIcons.ContentCopy}" />
+            <Button
+                Grid.Column="3"
+                Command="{Binding ToggleSelectAllCommand}"
+                SemanticProperties.Description="{Binding LocalizationManager.SelectAllTooltip}"
+                Style="{StaticResource HeaderIconButton}"
+                Text="{x:Static framework:MaterialIcons.CheckboxMultipleMarkedOutline}" />
+        </Grid>
+
+        <!--  Videos  -->
+        <CollectionView
+            Grid.Row="1"
+            ItemsSource="{Binding Items}"
+            SelectionMode="None">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="dialogs:SelectableVideoViewModel">
+                    <Grid
+                        Padding="4,6,12,6"
+                        ColumnDefinitions="Auto,Auto,*"
+                        ColumnSpacing="8">
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding ToggleCommand}" />
+                        </Grid.GestureRecognizers>
+                        <CheckBox
+                            Grid.Column="0"
+                            IsChecked="{Binding IsSelected}"
+                            VerticalOptions="Center" />
+                        <Border
+                            Grid.Column="1"
+                            HeightRequest="45"
+                            StrokeShape="RoundRectangle 4"
+                            StrokeThickness="0"
+                            VerticalOptions="Center"
+                            WidthRequest="80">
+                            <Image Aspect="AspectFill" Source="{Binding Video, Converter={x:Static converters:VideoToThumbnailConverter.Lowest}}" />
+                        </Border>
+                        <VerticalStackLayout
+                            Grid.Column="2"
+                            Spacing="2"
+                            VerticalOptions="Center">
+                            <Label
+                                FontSize="14"
+                                LineBreakMode="TailTruncation"
+                                MaxLines="2"
+                                Text="{Binding Video.Title}" />
+                            <Label
+                                LineBreakMode="TailTruncation"
+                                Style="{StaticResource SecondaryLabel}"
+                                Text="{Binding Details}" />
+                        </VerticalStackLayout>
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <!--  Options  -->
+        <Grid
+            Grid.Row="2"
+            Padding="16,8"
+            ColumnDefinitions="*,*"
+            ColumnSpacing="16"
+            RowDefinitions="Auto,Auto">
+            <BoxView
+                Grid.Row="0"
+                Grid.ColumnSpan="2"
+                Margin="-16,-8,-16,8"
+                Style="{StaticResource Divider}"
+                VerticalOptions="Start" />
+            <VerticalStackLayout Grid.Row="1" Grid.Column="0">
+                <Label Style="{StaticResource SecondaryLabel}" Text="{Binding LocalizationManager.ContainerLabel}" />
+                <Picker
+                    ItemsSource="{Binding AvailableContainerNames}"
+                    SelectedIndex="{Binding SelectedContainerIndex}"
+                    Title="{Binding LocalizationManager.ContainerLabel}" />
+            </VerticalStackLayout>
+            <VerticalStackLayout Grid.Row="1" Grid.Column="1">
+                <Label Style="{StaticResource SecondaryLabel}" Text="{Binding LocalizationManager.VideoQualityLabel}" />
+                <Picker
+                    IsEnabled="{Binding IsVideoQualitySelectable}"
+                    ItemsSource="{Binding AvailableVideoQualityPreferenceNames}"
+                    SelectedIndex="{Binding SelectedVideoQualityPreferenceIndex}"
+                    Title="{Binding LocalizationManager.VideoQualityLabel}" />
+            </VerticalStackLayout>
+        </Grid>
+
+        <!--  Buttons  -->
+        <HorizontalStackLayout
+            Grid.Row="3"
+            Padding="8"
+            HorizontalOptions="End"
+            Spacing="8">
+            <Button Command="{Binding CloseCommand}" Text="{Binding LocalizationManager.CancelButton}" />
+            <Button
+                Command="{Binding ConfirmCommand}"
+                Text="{Binding ConfirmButtonText}"
+                TextColor="{StaticResource AccentColor}" />
+        </HorizontalStackLayout>
+    </Grid>
+</ContentPage>

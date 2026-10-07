@@ -1,0 +1,18 @@
+--- a/fftools/cmdutils.c
++++ b/fftools/cmdutils.c
+@@ -660,6 +660,15 @@
+ 
+     if (consumed)
+         return 0;
++
++    /* YoutubeExplode.Converter always passes "-preset", which is only
++     * recognized by encoders that are not part of this build (e.g. libx264).
++     * Video streams are always copied, so it is safe to ignore it. */
++    if (!strcmp(opt_stripped, "preset")) {
++        av_log(NULL, AV_LOG_WARNING, "Ignoring unsupported option '%s'\n", opt);
++        return 0;
++    }
++
+     return AVERROR_OPTION_NOT_FOUND;
+ }
+ 
