@@ -43,12 +43,14 @@ public class DialogManager(ViewManager viewManager) : IDisposable
 
     public async Task<T?> ShowDialogAsync<T>(DialogViewModelBase<T> dialog)
     {
+        // Message boxes are displayed on top of the current page, which may be another dialog,
+        // so they shouldn't wait for other dialogs to close.
+        if (dialog is MessageBoxViewModel messageBox)
+            return (T?)(object?)await ShowMessageBoxAsync(messageBox);
+
         await _dialogLock.WaitAsync();
         try
         {
-            if (dialog is MessageBoxViewModel messageBox)
-                return (T?)(object?)await ShowMessageBoxAsync(messageBox);
-
             var rootPage =
                 GetRootPage()
                 ?? throw new InvalidOperationException("The application window is not available.");
